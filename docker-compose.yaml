@@ -1,0 +1,38 @@
+services:
+  mysql-db:
+    image: mysql:8.0.40
+    container_name: mysql-db-instance
+    restart: always
+    environment:
+      MYSQL_DATABASE: inventory-db
+      MYSQL_USER: olmosbek
+      MYSQL_PASSWORD: qwerty789
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  spring-boot-app:
+    image: openjdk:17
+    container_name: spring-boot-app
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    volumes:
+      - ./target/inventory-store-0.0.1-SNAPSHOT.jar:/inventory-store.jar
+    command: ["java", "-jar", "/inventory-store.jar"]
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db-instance:3306/inventory-db
+      SPRING_DATASOURCE_USERNAME: olmosbek
+      SPRING_DATASOURCE_PASSWORD: qwerty789
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql_data:

@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: inventory-store
+  datasource:
+    url: jdbc:mysql://mysql-db-instance:3306/inventory-db
+    username: olmosbek
+    password: qwerty789
+    driver-class-name: com.mysql.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework: INFO
+    hibernate.SQL: INFO
+    hibernate.type.descriptor.sql.BasicBinder: TRACE
